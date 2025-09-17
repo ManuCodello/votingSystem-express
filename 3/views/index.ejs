@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn It, Love It</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+
+</head>
+<body>
+    <div class="container">
+    <h1 class="main-title">🔥 Temas Populares 🔥</h1>
+
+    <div class="form-container">
+      <form action="/topics" method="POST" class="topic-form">
+        <input type="text" name="title" placeholder="¿Qué quieres aprender hoy?" class="topic-form__input" required>
+        <button type="submit" class="topic-form__button">Añadir Tema</button>
+      </form>
+    </div>
+    <div class="topic-list">
+      <% if (topics.length > 0) { %>
+            <% topics.forEach(topic => { %>
+                <div class="topic" data-id="<%= topic.id %>">
+                    <div class="topic__details">
+                    <span class="topic__title"><%= topic.title %></span>
+                    <span class="topic__votes"><%= topic.votes %> ❤️</span>
+                    </div>
+                    <div class="topic__actions">
+                    <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
+                    
+                    <button class="topic__delete-button js-delete-btn" data-id="<%= topic.id %>">🗑️</button>
+                    </div>
+                </div>
+    <% }) %>
+      <% } else { %>
+        <p>No hay temas para mostrar. ¡Añade uno!</p>
+      <% } %>
+    </div>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+</html>

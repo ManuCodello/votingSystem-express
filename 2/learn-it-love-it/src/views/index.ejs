@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<div class="bg-gray-800 rounded-lg p-6 mb-10 shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Añadir un Nuevo Tema de Aprendizaje</h2>
+    <form action="/topics" method="POST" class="flex items-center gap-4">
+        <input type="text" name="title" placeholder="Ej: 'Aprender sobre agujeros negros'" required class="w-full bg-gray-700 text-white rounded-md px-4 py-2 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md transition whitespace-nowrap">Crear Tema</button>
+    </form>
+</div>
+
+<div id="topics-container" class="space-y-8">
+    <% topics.forEach(topic => { %>
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700">
+            <div class="p-6">
+                <div class="flex justify-between items-start gap-4">
+                    <h3 class="text-2xl font-bold text-gray-100"><%= topic.title %></h3>
+                    <div class="flex items-center gap-4 flex-shrink-0">
+                        <button 
+                            class="vote-btn bg-gray-700 hover:bg-green-600 transition p-2 rounded-full flex items-center gap-2"
+                            data-type="topic" 
+                            data-topic-id="<%= topic.id %>">
+                            <span class="text-xl">👍</span>
+                            <span class="vote-count font-bold text-lg"><%= topic.votes %></span>
+                        </button>
+                        <form action="/topics/<%= topic.id %>/delete" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este tema y todos sus enlaces?');">
+                             <button type="submit" class="text-gray-400 hover:text-red-500 transition text-2xl">&times;</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="mt-6 pl-4 border-l-2 border-gray-700 space-y-4">
+                    <% topic.links.forEach(link => { %>
+                        <div class="flex justify-between items-center group">
+                            <a href="<%= link.url %>" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 transition"><%= link.title %></a>
+                            <div class="flex items-center gap-3">
+                                <button 
+                                    class="vote-btn bg-gray-700/80 hover:bg-green-600 transition p-2 rounded-full flex items-center gap-2"
+                                    data-type="link" 
+                                    data-topic-id="<%= topic.id %>" 
+                                    data-link-id="<%= link.id %>">
+                                    <span class="text-md">👍</span>
+                                    <span class="vote-count font-bold"><%= link.votes %></span>
+                                </button>
+                                <form action="/topics/<%= topic.id %>/links/<%= link.id %>/delete" method="POST" class="opacity-0 group-hover:opacity-100 transition">
+                                    <button type="submit" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="mt-6">
+                     <form action="/topics/<%= topic.id %>/links" method="POST" class="flex items-center gap-2">
+                        <input type="text" name="title" placeholder="Título del enlace" required class="w-1/3 bg-gray-700 text-white rounded-md px-3 py-1 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                        <input type="url" name="url" placeholder="https://ejemplo.com" required class="flex-grow bg-gray-700 text-white rounded-md px-3 py-1 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                        <button type="submit" class="bg-gray-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-md transition text-sm">Añadir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+<%- include('partials/footer') %>
