@@ -1,5 +1,6 @@
 import express from 'express';
 import topicRoutes from './routes/topic.routes.js';
+import subtopicRoutes from './routes/subtopic.routes.js'; 
 
 const app = express();
 const PORT = 3000;
@@ -19,6 +20,7 @@ app.set('views', 'views');
 
 // Rutas
 app.use('/', topicRoutes);
+app.use('/', subtopicRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {

@@ -4,63 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Learn It, Love It</title>
-  
   <link rel="stylesheet" href="/css/style.css">
-
-
 </head>
 <body>
-    <div class="container">
+  <div class="container">
     <h1 class="main-title">🔥 Temas Populares 🔥</h1>
 
     <div class="form-container">
       <form action="/topics" method="POST" class="topic-form">
-        <input type="text" name="title" placeholder="¿Qué quieres aprender hoy?" class="topic-form__input" required>
+        <input type="text" name="title" placeholder="Añadir un nuevo tema principal" class="topic-form__input" required>
         <button type="submit" class="topic-form__button">Añadir Tema</button>
       </form>
     </div>
+
     <div class="topic-list">
-      <% if (topics.length > 0) { %>
-            <% topics.forEach(topic => { %>
-                <div class="topic" data-id="<%= topic.id %>">
-                    <div class="topic__details">
-                    <span class="topic__title"><%= topic.title %></span>
-                    <span class="topic__votes"><%= topic.votes %> ❤️</span>
-                    </div>
-                    <div class="topic__actions">
-                      <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
-                      <button class="topic__edit-button js-edit-btn" data-id="<%= topic.id %>">✏️</button>
-                      <button class="topic__delete-button js-delete-btn" data-id="<%= topic.id %>">🗑️</button>
-                    </div>
-                    
-                </div>
-    <% }) %>
+      <% if (topics && topics.length > 0) { %>
+        <% topics.forEach(topic => { %>
+          <div class="topic" data-id="<%= topic.id %>">
+            <a href="/topics/<%= topic.id %>" class="topic__link">
+              <span class="topic__title"><%= topic.title %></span>
+            </a>
+            <div class="topic__actions">
+              <span class="topic__votes"><%= topic.votes %> ❤️</span>
+              <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
+            </div>
+          </div>
+        <% }) %>
       <% } else { %>
-        <p>No hay temas para mostrar. ¡Añade uno!</p>
+        <p class="empty-list-message">No hay temas para mostrar.</p>
       <% } %>
-    </div>
-  </div>
-  <div id="edit-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h2 class="main-title">Editar Tema</h2>
-      <form id="edit-form">
-        <input type="hidden" id="edit-topic-id" name="id">
-
-        <div class="form-group">
-          <label for="edit-topic-title">Título</label>
-          <input type="text" id="edit-topic-title" name="title" class="topic-form__input" required>
-        </div>
-
-        <div class="form-group">
-          <label for="edit-topic-link">Enlace (Opcional)</label>
-          <input type="url" id="edit-topic-link" name="link" class="topic-form__input" placeholder="https://ejemplo.com">
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" id="cancel-edit-btn" class="topic-form__button--secondary">Cancelar</button>
-          <button type="submit" class="topic-form__button">Guardar Cambios</button>
-        </div>
-      </form>
     </div>
   </div>
   <script src="/js/main.js"></script>

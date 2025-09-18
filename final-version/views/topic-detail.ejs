@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= topic.title %> - Learn It, Love It</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Volver a la lista</a>
+    <h1 class="main-title"><%= topic.title %></h1>
+
+    <div class="form-container">
+      <form id="add-subtopic-form">
+        <input type="text" name="title" placeholder="Título del subtema o enlace" class="topic-form__input" required>
+        <input type="url" name="link" placeholder="https://enlace.util" class="topic-form__input" required>
+        <button type="submit" class="topic-form__button">Añadir Enlace</button>
+      </form>
+    </div>
+
+    <h2>Enlaces y Recursos</h2>
+    <div class="subtopic-list">
+      <% if (subtopics && subtopics.length > 0) { %>
+        <% subtopics.forEach(subtopic => { %>
+          <div class="subtopic" data-id="<%= subtopic.id %>">
+            <a href="<%= subtopic.link %>" target="_blank" class="subtopic__title"><%= subtopic.title %></a>
+            <div class="subtopic__actions">
+              <button class="subtopic__action-btn js-edit-btn" data-id="<%= subtopic.id %>" title="Editar">✏️</button>
+              <button class="subtopic__action-btn js-delete-btn" data-id="<%= subtopic.id %>" title="Eliminar">🗑️</button>
+              <button class="subtopic__vote-btn js-upvote-btn" data-id="<%= subtopic.id %>" title="Votar a favor">▲</button>
+              <span class="subtopic__votes"><%= subtopic.votes %></span>
+              <button class="subtopic__vote-btn js-downvote-btn" data-id="<%= subtopic.id %>" title="Votar en contra">▼</button>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-list-message">Aún no hay enlaces. ¡Sé el primero en añadir uno!</p>
+      <% } %>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="main-title">Editar Enlace</h2>
+      <form id="edit-form">
+        <input type="hidden" id="edit-subtopic-id" name="id">
+        <div class="form-group">
+          <label for="edit-subtopic-title">Título</label>
+          <input type="text" id="edit-subtopic-title" name="title" class="topic-form__input" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-subtopic-link">Enlace</label>
+          <input type="url" id="edit-subtopic-link" name="link" class="topic-form__input" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancel-edit-btn" class="topic-form__button--secondary">Cancelar</button>
+          <button type="submit" class="topic-form__button">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const TOPIC_ID = <%- JSON.stringify(topic.id) %>;
+  </script>
+  <script src="/js/topic-detail.js"></script>
+</body>
+</html>
