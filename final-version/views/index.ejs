@@ -27,6 +27,8 @@
             <div class="topic__actions">
               <span class="topic__votes"><%= topic.votes %> ❤️</span>
               <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
+              <button class="topic__action-btn js-edit-topic-btn" data-id="<%= topic.id %>" title="Editar Tema">✏️</button>
+              <button class="topic__action-btn js-delete-topic-btn" data-id="<%= topic.id %>" title="Eliminar Tema">🗑️</button>
             </div>
           </div>
         <% }) %>
@@ -35,6 +37,24 @@
       <% } %>
     </div>
   </div>
+
+  <div id="edit-topic-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="main-title">Editar Tema Principal</h2>
+      <form id="edit-topic-form">
+        <input type="hidden" id="edit-topic-id" name="id">
+        <div class="form-group">
+          <label for="edit-topic-title">Título del Tema</label>
+          <input type="text" id="edit-topic-title" name="title" class="topic-form__input" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancel-edit-topic-btn" class="topic-form__button--secondary">Cancelar</button>
+          <button type="submit" class="topic-form__button">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="/js/main.js"></script>
 </body>
 </html>

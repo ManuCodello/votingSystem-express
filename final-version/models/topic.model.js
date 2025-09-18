@@ -46,3 +46,14 @@ export async function incrementVote(id) {
     await db.close();
   }
 }
+
+//función para actualizar el título de un tema
+export async function updateTopic(id, title) {
+  const db = await connectToDatabase();
+  try {
+    // Solo actualizamos el título donde el ID coincida
+    await db.run('UPDATE topics SET title = ? WHERE id = ?', title, id);
+  } finally {
+    await db.close();
+  }
+}

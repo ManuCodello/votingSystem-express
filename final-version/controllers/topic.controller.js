@@ -26,6 +26,30 @@ export const voteForTopic = async (req, res) => {
   res.json(topics);
 };
 
+// 👇 NUEVA FUNCIÓN: Obtiene datos de un tema como JSON para la modal de edición
+export const getTopicJSON = async (req, res) => {
+  const { id } = req.params;
+  const topic = await topicModel.getTopicById(id);
+  res.json(topic);
+};
+
+// 👇 NUEVA FUNCIÓN: Actualiza el título de un tema
+export const updateTopic = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+  await topicModel.updateTopic(id, title);
+  const topics = await topicModel.getTopics();
+  res.json(topics);
+};
+
+// 👇 NUEVA FUNCIÓN: Elimina un tema y responde con la lista actualizada
+export const deleteTopic = async (req, res) => {
+    const { id } = req.params;
+    await topicModel.removeTopic(id);
+    const topics = await topicModel.getTopics();
+    res.json(topics);
+};
+
 export const renderTopicDetailPage = async (req, res) => {
   try {
     const { id } = req.params;
