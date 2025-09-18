@@ -6,6 +6,7 @@ async function setup() {
     CREATE TABLE IF NOT EXISTS topics (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
+      link TEXT,
       votes INTEGER DEFAULT 0
     )
   `);

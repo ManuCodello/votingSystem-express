@@ -28,15 +28,39 @@
                     <span class="topic__votes"><%= topic.votes %> ❤️</span>
                     </div>
                     <div class="topic__actions">
-                    <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
-                    
-                    <button class="topic__delete-button js-delete-btn" data-id="<%= topic.id %>">🗑️</button>
+                      <button class="topic__vote-button js-vote-btn" data-id="<%= topic.id %>">Votar 👍</button>
+                      <button class="topic__edit-button js-edit-btn" data-id="<%= topic.id %>">✏️</button>
+                      <button class="topic__delete-button js-delete-btn" data-id="<%= topic.id %>">🗑️</button>
                     </div>
+                    
                 </div>
     <% }) %>
       <% } else { %>
         <p>No hay temas para mostrar. ¡Añade uno!</p>
       <% } %>
+    </div>
+  </div>
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="main-title">Editar Tema</h2>
+      <form id="edit-form">
+        <input type="hidden" id="edit-topic-id" name="id">
+
+        <div class="form-group">
+          <label for="edit-topic-title">Título</label>
+          <input type="text" id="edit-topic-title" name="title" class="topic-form__input" required>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-topic-link">Enlace (Opcional)</label>
+          <input type="url" id="edit-topic-link" name="link" class="topic-form__input" placeholder="https://ejemplo.com">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancel-edit-btn" class="topic-form__button--secondary">Cancelar</button>
+          <button type="submit" class="topic-form__button">Guardar Cambios</button>
+        </div>
+      </form>
     </div>
   </div>
   <script src="/js/main.js"></script>

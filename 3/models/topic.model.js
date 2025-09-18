@@ -43,3 +43,24 @@ export async function removeTopic(id) {
   } finally {
     await db.close();
   }}
+
+
+  // Busca un único tema por su ID
+export async function getTopicById(id) {
+  const db = await connectToDatabase();
+  try {
+    return await db.get('SELECT * FROM topics WHERE id = ?', id);
+  } finally {
+    await db.close();
+  }
+}
+
+// Actualiza el título y el enlace de un tema
+export async function updateTopic(id, title, link) {
+  const db = await connectToDatabase();
+  try {
+    await db.run('UPDATE topics SET title = ?, link = ? WHERE id = ?', title, link, id);
+  } finally {
+    await db.close();
+  }
+}

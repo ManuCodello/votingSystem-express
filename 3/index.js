@@ -10,6 +10,9 @@ app.use(express.static('public'));
 // Middleware para parsear el cuerpo de solicitudes con formato url-encoded (formularios)
 app.use(express.urlencoded({ extended: true }));
 
+// MIDDLEWARE para parsear cuerpos de solicitud JSON 👇
+app.use(express.json());
+
 // Configuración del motor de plantillas EJS
 app.set('view engine', 'ejs');
 app.set('views', 'views');
