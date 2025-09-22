@@ -1,5 +1,6 @@
 // public/js/topic-detail.js
 document.addEventListener('DOMContentLoaded', () => {
+  // --- SELECTORES DE ELEMENTOS ---
   const subtopicList = document.querySelector('.subtopic-list');
   const addSubtopicForm = document.getElementById('add-subtopic-form');
   const modal = document.getElementById('edit-modal');
@@ -17,11 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
   cancelBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', e => e.target === modal && closeModal());
 
-  // --- ENVIAR FORMULARIO DE AÑADIR SUBTEMA ---
+  // --- ENVIAR FORMULARIO DE AÑADIR SUBTEMA (Sin cambios) ---
   addSubtopicForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = e.target.elements.title.value;
     const link = e.target.elements.link.value;
+    // Esta ruta ya usa POST para crear, lo cual es correcto.
     const response = await fetch(`/topics/${TOPIC_ID}/subtopics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,56 +34,81 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.reset();
   });
 
-  // --- ENVIAR FORMULARIO DE EDICIÓN ---
+  // --- ENVIAR FORMULARIO DE EDICIÓN (Actualizado a PUT) ---
   editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = editIdField.value;
     const title = editTitleField.value;
     const link = editLinkField.value;
-    const response = await fetch(`/subtopics/${id}/update`, {
-      method: 'POST',
+
+    // CAMBIO AQUÍ: Se usa el método PUT y la URL simplificada.
+    const response = await fetch(`/subtopics/${id}`, {
+      method: 'PUT', // <-- Método cambiado a PUT
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, link, topic_id: TOPIC_ID }),
     });
+
     const updatedSubtopics = await response.json();
     closeModal();
     renderSubtopics(updatedSubtopics);
   });
 
   // --- MANEJO DE CLICS EN LA LISTA (VOTAR, EDITAR, ELIMINAR) ---
+  // Reestructurado para mayor claridad
   subtopicList.addEventListener('click', async (e) => {
-    const target = e.target;
+    const target = e.target.closest('button'); // Asegura que capturamos el botón
+    if (!target) return;
+
     const id = target.dataset.id;
     if (!id) return;
 
-    let url, method = 'POST', body = { topic_id: TOPIC_ID };
-
+    // --- Caso 1: Botón de Editar (abre la modal) ---
     if (target.matches('.js-edit-btn')) {
-      const title = target.closest('.subtopic').querySelector('.subtopic__title').textContent;
-      const link = target.closest('.subtopic').querySelector('.subtopic__title').href;
+      const subtopicElement = target.closest('.subtopic');
+      const title = subtopicElement.querySelector('.subtopic__title').textContent;
+      const link = subtopicElement.querySelector('.subtopic__title').href;
+      
       editIdField.value = id;
       editTitleField.value = title;
       editLinkField.value = link;
       openModal();
-      return;
+      return; // Termina la ejecución aquí
     }
     
-    if (target.matches('.js-delete-btn')) url = `/subtopics/${id}/delete`;
+    // --- Caso 2: Botón de Eliminar (Actualizado a DELETE) ---
+    if (target.matches('.js-delete-btn')) {
+      if (!confirm('¿Estás seguro de que quieres eliminar este subtema?')) return;
+      
+      // CAMBIO AQUÍ: Se usa el método DELETE y la URL simplificada.
+      const response = await fetch(`/subtopics/${id}`, {
+        method: 'DELETE', // <-- Método cambiado a DELETE
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic_id: TOPIC_ID }) // Enviamos topic_id por si el backend lo necesita
+      });
+      
+      const updatedSubtopics = await response.json();
+      renderSubtopics(updatedSubtopics);
+      return; // Termina la ejecución aquí
+    }
+
+    // --- Caso 3: Botones de Votar (siguen usando POST) ---
+    let url;
     if (target.matches('.js-upvote-btn')) url = `/subtopics/${id}/upvote`;
     if (target.matches('.js-downvote-btn')) url = `/subtopics/${id}/downvote`;
     
-    if (!url) return;
+    if (!url) return; // Si no es un botón de voto, no hacemos nada más
 
     const response = await fetch(url, {
-      method,
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ topic_id: TOPIC_ID }),
     });
+    
     const updatedSubtopics = await response.json();
     renderSubtopics(updatedSubtopics);
   });
 
-  // --- FUNCIÓN PARA RENDERIZAR LA LISTA DE SUBTEMAS ---
+  // --- FUNCIÓN PARA RENDERIZAR LA LISTA DE SUBTEMAS (Sin cambios) ---
   function renderSubtopics(subtopics) {
     subtopicList.innerHTML = '';
     if (subtopics.length === 0) {

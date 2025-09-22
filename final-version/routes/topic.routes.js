@@ -1,19 +1,43 @@
 // routes/topic.routes.js
 import { Router } from 'express';
-import { renderTopicsPage, createTopic, voteForTopic, renderTopicDetailPage, getTopicJSON, updateTopic ,deleteTopic } from '../controllers/topic.controller.js';
+import { 
+  renderTopicsPage, 
+  createTopic, 
+  voteForTopic, 
+  renderTopicDetailPage, 
+  getTopicJSON, 
+  updateTopic, 
+  deleteTopic,
+} from '../controllers/topic.controller.js';
+
+import { createSubtopic } from '../controllers/subtopic.controller.js';
 
 const router = Router();
 
+// --- Rutas para renderizar vistas (HTML) ---
 router.get('/', renderTopicsPage);
-router.post('/topics', createTopic);
-router.get('/topics/:id', renderTopicDetailPage);
-router.post('/topics/:id/vote', voteForTopic);
+router.get('/:id', renderTopicDetailPage);
 
-router.post('/topics/:id/update', updateTopic); // <-- Nueva ruta para actualizar
-router.post('/topics/:id/delete', deleteTopic); // <-- Nueva ruta para eliminar
+// --- Rutas para la API (manejo de datos) ---
 
-// Ruta API para obtener datos de un solo tema en JSON
-router.get('/api/topics/:id', getTopicJSON); // <-- Nueva ruta API
+// OBTENER un tema específico (JSON)
+router.get('/api/topics/:id', getTopicJSON); 
+
+// CREAR un nuevo tema
+router.post('/', createTopic);
+
+// ACTUALIZAR un tema existente
+router.put('/:id', updateTopic);
+
+// ELIMINAR un tema existente
+router.delete('/:id', deleteTopic);
+
+// VOTAR por un tema (POST es adecuado aquí porque es una acción)
+router.post('/:id/vote', voteForTopic);
+
+// Llama directamente al controlador, sin importar el otro router.
+router.post('/:topic_id/subtopics', createSubtopic);
+
 
 export default router;
 

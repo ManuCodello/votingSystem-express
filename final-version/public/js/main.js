@@ -8,38 +8,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const editIdField = document.getElementById('edit-topic-id');
   const editTitleField = document.getElementById('edit-topic-title');
 
+  // Si los elementos principales no existen, no continuamos para evitar errores.
   if (!topicList || !modal) return;
 
   // --- Lógica de la Modal ---
   const openModal = () => modal.classList.remove('hidden');
   const closeModal = () => modal.classList.add('hidden');
-  cancelBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => e.target === modal && closeModal());
 
-  // --- Manejo del Formulario de Edición ---
+  cancelBtn.addEventListener('click', closeModal);
+
+  // Cierra la modal si se hace clic fuera del contenido
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // --- Manejo del Formulario de Edición (Actualizado con PUT) ---
   editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = editIdField.value;
     const title = editTitleField.value;
     
-    const response = await fetch(`/topics/${id}/update`, {
-      method: 'POST',
+    // Petición con el método PUT para actualizar el recurso
+    const response = await fetch(`/topics/${id}`, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title }),
     });
-    const updatedTopics = await response.json();
-    closeModal();
-    renderTopics(updatedTopics);
+
+    // Si la actualización fue exitosa, el servidor devuelve la lista actualizada
+    if (response.ok) {
+      const updatedTopics = await response.json();
+      closeModal();
+      renderTopics(updatedTopics); // Actualiza la vista sin recargar la página
+    } else {
+      console.error('Error al actualizar el tema');
+    }
   });
 
   // --- Delegación de Eventos para la Lista de Temas ---
   topicList.addEventListener('click', async (event) => {
-    const target = event.target;
-    const id = target.dataset.id;
-    if (!id) return;
+    // Nos aseguramos de que el objetivo sea un botón con `data-id`
+    const target = event.target.closest('button[data-id]');
+    if (!target) return;
 
-    // --- Lógica para Editar ---
+    const id = target.dataset.id;
+
+    // --- Lógica para Abrir Modal de Edición ---
     if (target.matches('.js-edit-topic-btn')) {
+      // Obtenemos los datos actuales del tema para rellenar el formulario
       const response = await fetch(`/api/topics/${id}`);
       const topic = await response.json();
       
@@ -48,14 +66,24 @@ document.addEventListener('DOMContentLoaded', () => {
       openModal();
     }
 
-    // --- Lógica para Eliminar ---
+    // --- Lógica para Eliminar (Actualizado con DELETE) ---
     if (target.matches('.js-delete-topic-btn')) {
       if (!confirm('¿Estás seguro de que quieres eliminar este tema? Se borrarán también todos sus enlaces.')) {
         return;
       }
-      const response = await fetch(`/topics/${id}/delete`, { method: 'POST' });
-      const updatedTopics = await response.json();
-      renderTopics(updatedTopics);
+
+      // Petición con el método DELETE para eliminar el recurso
+      const response = await fetch(`/topics/${id}`, { 
+        method: 'DELETE' 
+      });
+
+      // Si la eliminación fue exitosa, el servidor devuelve la lista actualizada
+      if (response.ok) {
+        const updatedTopics = await response.json();
+        renderTopics(updatedTopics); // Actualiza la vista
+      } else {
+        console.error('Error al eliminar el tema');
+      }
     }
 
     // --- Lógica para Votar ---
@@ -67,8 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Función para Renderizar la Lista de Temas ---
+  // Esta función reconstruye el HTML de la lista de temas.
   function renderTopics(topics) {
-    topicList.innerHTML = '';
+    topicList.innerHTML = ''; // Limpia la lista actual
     topics.forEach(topic => {
       const element = document.createElement('div');
       element.className = 'topic';
@@ -88,4 +117,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
